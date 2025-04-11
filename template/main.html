@@ -1,0 +1,1081 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Config</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #00ff88;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .section {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            user-select: none;
+            color: #00ff88;
+        }
+
+        #color-button {
+            transition: color 0.3s ease;
+            color: inherit;
+        }
+
+        #color-button.purple {
+            color: #9b4dca !important;
+        }
+        #color-button.red {
+            color: #ff4d4d !important;
+        }
+        #color-button.yellow {
+            color: #ffeb3b !important;
+        }
+
+        .section.disabled h2 {
+            color: #ff3333;
+        }
+
+        .section input[type="checkbox"].feature-toggle {
+            display: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-left: 10px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ff3333;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #00ff88;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .config-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .config-item label {
+            min-width: 100px;
+            text-align: right;
+            margin-right: 10px;
+            color: #00ff88;
+        }
+
+        .toggle-label {
+            color: #00ff88;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            font-weight: bold;
+        }
+
+        .toggle-label.disabled {
+            color: #ff3333;
+        }
+
+        input[type="number"] {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: #00ff88;
+            padding: 5px 10px;
+            width: 120px;
+            border-radius: 4px;
+        }
+
+        input[type="number"]:focus {
+            border-color: #00ff88;
+            outline: none;
+        }
+
+        .key-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .key-input input {
+            flex-shrink: 0;
+            width: 120px;
+            cursor: pointer;
+            background-color: #1a1a1a;
+            color: #00ff88;
+            border: 1px solid #333;
+            transition: all 0.2s;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .key-input input:focus {
+            background-color: #2d2d2d;
+            border-color: #00ff88;
+            outline: none;
+        }
+
+        .key-input input.detecting {
+            background-color: #2196F3;
+            color: white;
+            border-color: #1976D2;
+        }
+
+        .key-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .key-name {
+            color: #00ff88;
+            font-weight: bold;
+            min-width: 80px;
+        }
+
+        .key-code {
+            color: #666;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .hsv-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .hsv-input input {
+            width: 70px;
+        }
+
+        button {
+            background-color: #00ff88;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: #00cc6a;
+        }
+
+        #status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 4px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        #status.success {
+            background-color: #00ff88;
+            color: #1a1a1a;
+        }
+
+        #status.error {
+            background-color: #ff3333;
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .coords-toggle {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .coord-button {
+            background: none;
+            border: 2px solid #333;
+            color: #ff3333;
+            padding: 5px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+
+        .coord-button.enabled {
+            color: #00ff88;
+            border-color: #00ff88;
+        }
+
+        .coord-button:hover {
+            background-color: #2d2d2d;
+        }
+
+        .standalone-toggle {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .standalone-button {
+            background: none;
+            border: 2px solid #333;
+            color: #00ff88;
+            padding: 5px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+
+        .standalone-button.disabled {
+            color: #ff3333;
+            border-color: #ff3333;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+            user-select: none;
+            color: #00ff88;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-item.disabled {
+            color: #ff3333;
+        }
+
+        .toggle-item input[type="checkbox"] {
+            display: none;
+        }
+
+        .color-presets {
+            display: none;
+            position: absolute;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        .color-preset-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+        }
+
+        .color-preset-item:hover {
+            background-color: #2a2a2a;
+        }
+
+        .color-preset-item .color-sample {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .color-preset-item.purple .color-sample { background-color: #9b59b6; }
+        .color-preset-item.red .color-sample { background-color: #e74c3c; }
+        .color-preset-item.yellow .color-sample { background-color: #f1c40f; }
+
+        .color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 2px solid #333;
+        }
+
+        .color-purple { background-color: #9b59b6; }
+        .color-red { background-color: #e74c3c; }
+        .color-yellow { background-color: #f1c40f; }
+    </style>
+</head>
+<body>
+    <h1>Calisto Cheat</h1>
+    <div id="status"></div>
+    <form id="configForm">
+
+        <div class="section enabled" id="display-section">
+            <h2>Display</h2>
+            <div class="config-item">
+                <label>Monitor Width</label>
+                <input type="number" name="display.monitor_width" step="1">
+            </div>
+            <div class="config-item">
+                <label>Monitor Height</label>
+                <input type="number" name="display.monitor_height" step="1">
+            </div>
+            <div class="config-item">
+                <label>FOV Width</label>
+                <input type="number" name="display.fov_width" step="1">
+            </div>
+            <div class="config-item">
+                <label>FOV Height</label>
+                <input type="number" name="display.fov_height" step="1">
+            </div>
+            <div class="config-item">
+                <label>Target FPS</label>
+                <input type="number" name="display.target_fps" step="1">
+            </div>
+        </div>
+
+        <div class="section enabled" id="color-section">
+            <h2 id="color-button" onclick="changeColor()">Color</h2>
+            <div class="config-item">
+                <label>Lower HSV</label>
+                <div class="hsv-input">
+                    <input type="number" name="color.lower[0]" step="1" min="0" max="255" value="0">
+                    <input type="number" name="color.lower[1]" step="1" min="0" max="255" value="0">
+                    <input type="number" name="color.lower[2]" step="1" min="0" max="255" value="0">
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Upper HSV</label>
+                <div class="hsv-input">
+                    <input type="number" name="color.upper[0]" step="1" min="0" max="255" value="0">
+                    <input type="number" name="color.upper[1]" step="1" min="0" max="255" value="0">
+                    <input type="number" name="color.upper[2]" step="1" min="0" max="255" value="0">
+                </div>
+            </div>
+        </div>
+
+        <div class="section enabled" id="triggerbot-section">
+            <input type="checkbox" class="feature-toggle" id="triggerbot-enabled" name="triggerbot.enabled" checked>
+            <h2 onclick="toggleFeature(this)">Triggerbot</h2>
+            <div class="config-item">
+                <label>Key</label>
+                <div class="key-input">
+                    <input type="text" name="triggerbot.key" placeholder="Click to detect key" readonly>
+                    <span class="key-code" id="triggerbot-key-code"></span>
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Deadzone</label>
+                <input type="number" name="triggerbot.deadzone" step="0.01" value="0.45">
+            </div>
+        </div>
+
+        <div class="section enabled" id="aimbot-section">
+            <input type="checkbox" class="feature-toggle" id="aimbot-enabled" name="aimbot.enabled" checked>
+            <h2 onclick="toggleFeature(this)">Aimbot</h2>
+            <div class="config-item">
+                <label>Key</label>
+                <div class="key-input">
+                    <input type="text" name="aimbot.key" placeholder="Click to detect key" readonly>
+                    <span class="key-code" id="aimbot-key-code"></span>
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Max PX</label>
+                <input type="number" name="aimbot.max_px" step="1">
+            </div>
+            <div class="config-item">
+                <label>Min PX</label>
+                <input type="number" name="aimbot.min_px" step="1">
+            </div>
+            <div class="config-item">
+                <label>Max PY</label>
+                <input type="number" name="aimbot.max_py" step="1">
+            </div>
+            <div class="config-item">
+                <label>Min PY</label>
+                <input type="number" name="aimbot.min_py" step="1">
+            </div>
+            <div class="config-item">
+                <label>Deadzone X</label>
+                <input type="number" name="aimbot.deadzone_x" step="1">
+            </div>
+            <div class="config-item">
+                <label>Deadzone Y</label>
+                <input type="number" name="aimbot.deadzone_y" step="1">
+            </div>
+            <div class="config-item">
+                <label>Y Offset</label>
+                <input type="number" name="aimbot.y_offset" step="1">
+            </div>
+            <div class="config-item">
+                <div class="toggle-item" onclick="toggleOption(this)">
+                    <input type="checkbox" name="aimbot.humanized_smooth" checked>
+                    Humanized Smooth
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Humanized Smooth X</label>
+                <input type="number" name="aimbot.humanized_smooth_x" step="1">
+            </div>
+            <div class="config-item">
+                <label>Humanized Smooth Y</label>
+                <input type="number" name="aimbot.humanized_smooth_y" step="1">
+            </div>
+            <div class="config-item">
+                <label>Coords</label>
+                <div class="coords-toggle">
+                    <button type="button" class="coord-button" data-coord="x" onclick="toggleCoord(this, 'aimbot', 0)">X Coord</button>
+                    <button type="button" class="coord-button" data-coord="y" onclick="toggleCoord(this, 'aimbot', 1)">Y Coord</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section enabled" id="rcs-section">
+            <input type="checkbox" class="feature-toggle" id="rcs-enabled" name="rcs.enabled" checked>
+            <h2 onclick="toggleFeature(this)">RCS</h2>
+            <div class="config-item">
+                <div class="toggle-item" onclick="toggleOption(this)">
+                    <input type="checkbox" name="rcs.standalone">
+                    Standalone
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Strength</label>
+                <input type="number" name="rcs.strength" step="0.1" value="1">
+            </div>
+            <div class="config-item">
+                <label>Max Strength</label>
+                <input type="number" name="rcs.max_strength" step="0.1" value="1">
+            </div>
+            <div class="config-item">
+                <label>Last Shot Time</label>
+                <input type="number" name="rcs.last_shot_time" step="0.01" value="1">
+            </div>
+            <div class="config-item">
+                <label>Shoot Count</label>
+                <input type="number" name="rcs.shoot_count" step="1" value="1">
+            </div>
+            <div class="config-item">
+                <label>Smooth</label>
+                <input type="number" name="rcs.sleep" step="0.001" value="1">
+            </div>
+        </div>
+
+        <div class="section enabled" id="magnetic-section">
+            <input type="checkbox" class="feature-toggle" id="magnetic-enabled" name="magnetic.enabled" checked>
+            <h2 onclick="toggleFeature(this)">Magnetic</h2>
+            <div class="config-item">
+                <label>Key</label>
+                <div class="key-input">
+                    <input type="text" name="magnetic.key" placeholder="Click to detect key" readonly>
+                    <span class="key-code" id="magnetic-key-code"></span>
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Max PX</label>
+                <input type="number" name="magnetic.max_px" step="1">
+            </div>
+            <div class="config-item">
+                <label>Min PX</label>
+                <input type="number" name="magnetic.min_px" step="1">
+            </div>
+            <div class="config-item">
+                <label>Max PY</label>
+                <input type="number" name="magnetic.max_py" step="1">
+            </div>
+            <div class="config-item">
+                <label>Min PY</label>
+                <input type="number" name="magnetic.min_py" step="1">
+            </div>
+            <div class="config-item">
+                <label>Deadzone X</label>
+                <input type="number" name="magnetic.deadzone_x" step="1">
+            </div>
+            <div class="config-item">
+                <label>Deadzone Y</label>
+                <input type="number" name="magnetic.deadzone_y" step="1">
+            </div>
+            <div class="config-item">
+                <label>Y Offset</label>
+                <input type="number" name="magnetic.y_offset" step="1">
+            </div>
+            <div class="config-item">
+                <div class="toggle-item" onclick="toggleOption(this)">
+                    <input type="checkbox" name="magnetic.humanized_smooth" checked>
+                    Humanized Smooth
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Humanized Smooth X</label>
+                <input type="number" name="magnetic.humanized_smooth_x" step="1">
+            </div>
+            <div class="config-item">
+                <label>Humanized Smooth Y</label>
+                <input type="number" name="magnetic.humanized_smooth_y" step="1">
+            </div>
+            <div class="config-item">
+                <label>Coords</label>
+                <div class="coords-toggle">
+                    <button type="button" class="coord-button" data-coord="x" onclick="toggleCoord(this, 'magnetic', 0)">X Coord</button>
+                    <button type="button" class="coord-button" data-coord="y" onclick="toggleCoord(this, 'magnetic', 1)">Y Coord</button>
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Triggerbot Deadzone</label>
+                <input type="number" name="magnetic.triggerbot_deadzone" step="0.01" value="0.48">
+            </div>
+        </div>
+
+        <div class="section enabled" id="misc-section">
+            <input type="checkbox" class="feature-toggle" id="misc-enabled" name="misc.enabled" checked>
+            <h2 onclick="toggleFeature(this)">Miscellaneous</h2>
+            <div class="config-item">
+                <div class="toggle-item" onclick="toggleOption(this)">
+                    <input type="checkbox" name="misc.bhop" checked>
+                    Bhop
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Bhop Key</label>
+                <div class="key-input">
+                    <input type="text" name="misc.bhop_key" placeholder="Click to detect key" readonly>
+                    <span class="key-code" id="misc-bhop-key-code"></span>
+                </div>
+            </div>
+            <div class="config-item">
+                <label>Panic Key</label>
+                <div class="key-input">
+                    <input type="text" name="misc.panic_key" placeholder="Click to detect key" readonly>
+                    <span class="key-code" id="misc-key-code"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-item">
+            <button type="button" onclick="saveConfig()">Save Config</button>
+        </div>
+    </form>
+
+    <script>
+        const keyMap = {
+            0x01: "Left Click",
+            0x02: "Right Click",
+            0x04: "Middle Click",
+            0x05: "X1 Mouse Button",
+            0x06: "X2 Mouse Button",
+            0x08: "Backspace",
+            0x09: "Tab",
+            0x0D: "Enter",
+            0x10: "Shift",
+            0x11: "Ctrl",
+            0x12: "Alt",
+            0x14: "Caps Lock",
+            0x1B: "Esc",
+            0x20: "Spacebar",
+            0x23: "End",
+            0x24: "Home",
+            0x25: "Left Arrow",
+            0x26: "Up Arrow",
+            0x27: "Right Arrow",
+            0x28: "Down Arrow",
+            0x2E: "Delete",
+            0xA0: "Left Shift",
+            0xA2: "Left Ctrl",
+            0xA4: "Left Alt",
+            0xA1: "Right Shift",
+            0xA3: "Right Ctrl",
+            0xA5: "Right Alt"
+        };
+
+        function getKeyName(keyCode) {
+            return keyMap[keyCode] || `Key 0x${keyCode.toString(16).toUpperCase()}`;
+        }
+
+        function getKeyCode(keyName) {
+            for (const [code, name] of Object.entries(keyMap)) {
+                if (name === keyName) return parseInt(code);
+            }
+            return null;
+        }
+
+        function updateKeyValue(input, keyCode) {
+            input.value = getKeyName(keyCode);
+            input.dataset.keyCode = keyCode;
+
+            const event = new Event('change', {
+                bubbles: true,
+                cancelable: true,
+            });
+            input.dispatchEvent(event);
+        }
+
+        function detectKey(event, input) {
+            event.preventDefault();
+            const keyCode = event.button !== undefined ? (event.button + 1) : event.keyCode;
+            updateKeyValue(input, keyCode);
+            input.blur();
+        }
+
+        function updateSectionState(section, enabled) {
+            section.classList.toggle('enabled', enabled);
+            section.classList.toggle('disabled', !enabled);
+            
+            const inputs = section.querySelectorAll('input:not(.feature-toggle)');
+            inputs.forEach(input => {
+                input.disabled = !enabled;
+            });
+        }
+
+        function toggleFeature(headerElement) {
+            const section = headerElement.closest('.section');
+            const checkbox = section.querySelector('.feature-toggle');
+            checkbox.checked = !checkbox.checked;
+            
+            updateSectionState(section, checkbox.checked);
+            
+            const formData = {};
+            formData[checkbox.name] = checkbox.checked;
+            fetch('/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+        }
+
+        function toggleOption(element) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            element.classList.toggle('disabled', !checkbox.checked);
+            
+            const formData = {};
+            const [section, field] = checkbox.name.split('.');
+            if (!formData[section]) {
+                formData[section] = {};
+            }
+            formData[section][field] = checkbox.checked;
+            
+            fetch('/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+        }
+
+        function toggleCoord(button, section, index) {
+            const formData = {};
+            formData[section] = { coords: [] };
+            
+            const buttons = button.parentElement.querySelectorAll('.coord-button');
+            const states = Array.from(buttons).map(btn => btn.classList.contains('enabled'));
+            
+            states[index] = !states[index];
+            button.classList.toggle('enabled');
+            
+            formData[section].coords = states;
+            
+            fetch('/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+        }
+
+        const colors = ['purple', 'red', 'yellow'];
+        let currentColorIndex = 0;
+
+        function saveConfig() {
+            const formData = {};
+            const form = document.getElementById('configForm');
+            
+            const toggles = form.querySelectorAll('.feature-toggle');
+            toggles.forEach(toggle => {
+                const path = toggle.name.split('.');
+                if (!formData[path[0]]) {
+                    formData[path[0]] = {};
+                }
+                formData[path[0]][path[1]] = toggle.checked;
+            });
+
+            const keyInputs = form.querySelectorAll('input[type="text"][readonly]');
+            keyInputs.forEach(input => {
+                if (input.dataset.keyCode) {
+                    const keyCode = parseInt(input.dataset.keyCode);
+                    const path = input.name.split('.');
+                    if (!formData[path[0]]) {
+                        formData[path[0]] = {};
+                    }
+                    formData[path[0]][path[1]] = keyCode;
+                }
+            });
+            
+            const numberInputs = form.querySelectorAll('input[type="number"]');
+            numberInputs.forEach(input => {
+                const name = input.name;
+                if (name.includes('[')) {
+                    const [section, field] = name.split('.');
+                    const arrayMatch = field.match(/(\w+)\[(\d+)\]/);
+                    if (arrayMatch && !formData[section]) {
+                        formData[section] = {};
+                    }
+                    if (arrayMatch && !formData[section][arrayMatch[1]]) {
+                        formData[section][arrayMatch[1]] = [];
+                    }
+                    if (arrayMatch) {
+                        const index = parseInt(arrayMatch[2]);
+                        formData[section][arrayMatch[1]][index] = parseInt(input.value);
+                    }
+                } else {
+                    const [section, field] = name.split('.');
+                    if (!formData[section]) {
+                        formData[section] = {};
+                    }
+                    if (input.name.includes('deadzone')) {
+                        formData[section][field] = parseFloat(input.value);
+                    } else {
+                        formData[section][field] = parseInt(input.value);
+                    }
+                }
+            });
+
+            const checkboxes = form.querySelectorAll('input[type="checkbox"]:not(.feature-toggle)');
+            checkboxes.forEach(checkbox => {
+                const [section, field] = checkbox.name.split('.');
+                if (data[section] && field in data[section]) {
+                    formData[section][field] = checkbox.checked;
+                }
+            });
+
+            ['aimbot', 'magnetic'].forEach(section => {
+                if (!formData[section]) {
+                    formData[section] = {};
+                }
+                const buttons = document.querySelectorAll(`#${section}-section .coord-button`);
+                const coords = [false, false];
+                buttons.forEach((button, index) => {
+                    coords[index] = button.classList.contains('enabled');
+                });
+                formData[section]['coords'] = coords;
+            });
+
+            fetch('/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status').textContent = 'Config saved!';
+                setTimeout(() => {
+                    document.getElementById('status').textContent = '';
+                }, 2000);
+            })
+            .catch(error => {
+                document.getElementById('status').textContent = 'Error saving config: ' + error;
+            });
+        }
+
+        function changeColor() {
+            const colorButton = document.getElementById('color-button');
+            
+            colorButton.classList.remove('purple', 'red', 'yellow');
+            
+            currentColorIndex = (currentColorIndex + 1) % colors.length;
+            const newColor = colors[currentColorIndex];
+            
+            colorButton.classList.add(newColor);
+            
+            fetch('/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    color: { color: newColor }
+                })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.color) {
+                    const preset = data.color[newColor];
+                    if (preset) {
+                        preset.lower.forEach((val, index) => {
+                            const hsvInput = document.querySelector(`[name="color.lower[${index}]"]`);
+                            if (hsvInput && hsvInput.value !== val.toString()) {
+                                hsvInput.value = val;
+                            }
+                        });
+                        preset.upper.forEach((val, index) => {
+                            const hsvInput = document.querySelector(`[name="color.upper[${index}]"]`);
+                            if (hsvInput && hsvInput.value !== val.toString()) {
+                                hsvInput.value = val;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function initializeFromConfig() {
+            fetch('/config')
+                .then(response => response.json())
+                .then(data => {
+                    const numberInputs = document.querySelectorAll('input[type="number"]');
+                    numberInputs.forEach(input => {
+                        const name = input.name;
+                        if (name.includes('[')) {
+                            const [section, field] = name.split('.');
+                            const arrayMatch = field.match(/(\w+)\[(\d+)\]/);
+                            if (arrayMatch && data[section] && data[section][arrayMatch[1]]) {
+                                const index = parseInt(arrayMatch[2]);
+                                input.value = data[section][arrayMatch[1]][index];
+                            }
+                        } else {
+                            const [section, field] = name.split('.');
+                            if (data[section] && field in data[section]) {
+                                input.value = data[section][field];
+                            }
+                        }
+                    });
+
+                    const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(.feature-toggle)');
+                    checkboxes.forEach(checkbox => {
+                        const [section, field] = checkbox.name.split('.');
+                        if (data[section] && field in data[section]) {
+                            checkbox.checked = data[section][field];
+                        }
+                    });
+
+                    const featureToggles = document.querySelectorAll('input[type="checkbox"].feature-toggle');
+                    featureToggles.forEach(toggle => {
+                        const [section, field] = toggle.name.split('.');
+                        if (data[section] && field in data[section]) {
+                            toggle.checked = data[section][field];
+                            updateSectionState(toggle.closest('.section'), toggle.checked);
+                        }
+                    });
+
+                    if (data.color && data.color.color) {
+                        const colorButton = document.getElementById('color-button');
+                        const color = data.color.color;
+                        colorButton.classList.remove('purple', 'red', 'yellow');
+                        colorButton.classList.add(color);
+                        currentColorIndex = colors.indexOf(color);
+                        
+                        const preset = data.color[color];
+                        if (preset) {
+                            const lowerInputs = document.querySelectorAll('input[name^="color.lower"]');
+                            const upperInputs = document.querySelectorAll('input[name^="color.upper"]');
+                            
+                            preset.lower.forEach((val, index) => {
+                                if (lowerInputs[index]) lowerInputs[index].value = val;
+                            });
+                            preset.upper.forEach((val, index) => {
+                                if (upperInputs[index]) upperInputs[index].value = val;
+                            });
+                        }
+                    }
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFromConfig();
+            
+            const form = document.getElementById('configForm');
+            const sections = document.querySelectorAll('.section');
+            let lastConfig = null;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+            });
+
+            sections.forEach(section => {
+                const toggle = section.querySelector('.feature-toggle');
+                if (toggle) {
+                    updateSectionState(section, toggle.checked);
+                }
+            });
+
+            document.querySelectorAll('.toggle-item').forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    item.classList.toggle('disabled', !checkbox.checked);
+                }
+            });
+
+            fetch('/config')
+                .then(response => response.json())
+                .then(data => {
+                    const formData = {};
+                    
+                    const toggles = form.querySelectorAll('.feature-toggle');
+                    toggles.forEach(toggle => {
+                        const path = toggle.name.split('.');
+                        if (!formData[path[0]]) {
+                            formData[path[0]] = {};
+                        }
+                        formData[path[0]][path[1]] = toggle.checked;
+                    });
+
+                    const keyInputs = form.querySelectorAll('input[type="text"][readonly]');
+                    keyInputs.forEach(input => {
+                        if (input.dataset.keyCode) {
+                            const keyCode = parseInt(input.dataset.keyCode);
+                            const path = input.name.split('.');
+                            if (!formData[path[0]]) {
+                                formData[path[0]] = {};
+                            }
+                            formData[path[0]][path[1]] = keyCode;
+                        }
+                    });
+                    
+                    const numberInputs = form.querySelectorAll('input[type="number"]');
+                    numberInputs.forEach(input => {
+                        const name = input.name;
+                        if (name.includes('[')) {
+                            const [section, field] = name.split('.');
+                            const arrayMatch = field.match(/(\w+)\[(\d+)\]/);
+                            if (arrayMatch && !formData[section]) {
+                                formData[section] = {};
+                            }
+                            if (arrayMatch && !formData[section][arrayMatch[1]]) {
+                                formData[section][arrayMatch[1]] = [];
+                            }
+                            if (arrayMatch) {
+                                const index = parseInt(arrayMatch[2]);
+                                formData[section][arrayMatch[1]][index] = parseInt(input.value);
+                            }
+                        } else {
+                            const [section, field] = name.split('.');
+                            if (!formData[section]) {
+                                formData[section] = {};
+                            }
+                            if (input.name.includes('deadzone')) {
+                                formData[section][field] = parseFloat(input.value);
+                            } else {
+                                formData[section][field] = parseInt(input.value);
+                            }
+                        }
+                    });
+
+                    const checkboxes = form.querySelectorAll('input[type="checkbox"]:not(.feature-toggle)');
+                    checkboxes.forEach(checkbox => {
+                        const path = checkbox.name.split('.');
+                        if (!formData[path[0]]) {
+                            formData[path[0]] = {};
+                        }
+                        formData[path[0]][path[1]] = checkbox.checked;
+                    });
+
+                    ['aimbot', 'magnetic'].forEach(section => {
+                        if (!formData[section]) {
+                            formData[section] = {};
+                        }
+                        const buttons = document.querySelectorAll(`#${section}-section .coord-button`);
+                        const coords = [false, false];
+                        buttons.forEach((button, index) => {
+                            coords[index] = button.classList.contains('enabled');
+                        });
+                        formData[section]['coords'] = coords;
+                    });
+
+                    for (const [section, values] of Object.entries(data)) {
+                        for (const [key, value] of Object.entries(values)) {
+                            if (Array.isArray(value)) {
+                                if (section === 'color' && (key === 'lower' || key === 'upper')) {
+                                    value.forEach((val, index) => {
+                                        const hsvInput = document.querySelector(`[name="${section}.${key}[${index}]"]`);
+                                        if (hsvInput && hsvInput.value !== val.toString()) {
+                                            hsvInput.value = val;
+                                        }
+                                    });
+                                } else if (key === 'coords') {
+                                    const buttons = document.querySelectorAll(`#${section}-section .coord-button`);
+                                    buttons.forEach((button, index) => {
+                                        if (index < value.length) {
+                                            button.classList.toggle('enabled', value[index]);
+                                        }
+                                    });
+                                }
+                            } else {
+                                const input = document.querySelector(`[name="${section}.${key}"]`);
+                                if (input) {
+                                    if (key === 'key' || key.endsWith('_key')) {
+                                        if (input.dataset.keyCode !== value.toString()) {
+                                            updateKeyValue(input, value);
+                                        }
+                                    } else if (input.value !== value.toString()) {
+                                        input.value = value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+        });
+    </script>
+</body>
+</html>
